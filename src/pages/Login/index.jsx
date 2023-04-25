@@ -3,9 +3,14 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import bgImg from "../../assets/signupBg.jpg";
+import { dbUsersData, loginMutation } from "../../utils/hooks/dbUsersData";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import { postingUrl } from "../../utils/url";
+import { toastObject } from "../../utils/helper";
 
 function LoginPage() {
-  const patternCheck = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  // const patternCheck = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   const {
     register,
@@ -18,21 +23,34 @@ function LoginPage() {
   });
 
   const navigate = useNavigate();
+  const { isLoading, error, data } = dbUsersData();
+  // console.log(data);
 
-  // const formSubmit = (data) => {
-  //   console.log(data);
-  //   if (patternCheck.test(data.email)) {
-  //     return navigate("/profile");
-  //   }
-  //   alert("invalid Email");
-  // };
+  const { newUserData, mutate, newUserLoading } = loginMutation("allUsers");
 
-  const formSubmit = (data) => {
-    console.log(data);
-    if (patternCheck.test(data.email) === false) {
-      return alert("invalid Email");
+  const formSubmit = (formData) => {
+    if (formData.email === "" || formData.password === "") {
+      toast.warning("Form field cannot be empty", toastObject());
+      return;
     }
-    navigate("/profile");
+
+    const findObject = data.some(
+      (objectData) =>
+        objectData.email === formData.email &&
+        objectData.password === formData.password
+    );
+
+    if (findObject === true) {
+      toast.success("login successful", toastObject());
+      navigate("/profile");
+      return;
+    }
+    if (findObject === false) {
+      toast.error("enter correct email / password", toastObject());
+      return;
+    }
+
+    mutate();
   };
 
   return (
@@ -60,7 +78,7 @@ function LoginPage() {
               type="password"
               placeholder="Password"
               name="password"
-              {...register("password", { required: true })}
+              {...register("password")}
               autoComplete="off"
             />
             <div className="flex items-center mt-4">

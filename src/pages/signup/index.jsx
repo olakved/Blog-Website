@@ -2,7 +2,11 @@ import React from "react";
 import signupBg from "../../assets/signupImg.jpg";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
+import { postingUrl } from "../../utils/url";
+import { toast } from "react-toastify";
+import { dbUsersData, signupMutation } from "../../utils/hooks/dbUsersData";
+import { toastObject } from "../../utils/helper";
+import { v4 as uuidv4 } from "uuid";
 
 function SignupPage() {
   const patternCheck = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -19,14 +23,43 @@ function SignupPage() {
     phone: "",
   });
 
-  //   const navigate = useNavigate();
+  const { isLoading, error, data } = dbUsersData();
+  // console.log(data);
 
-  const submitForm = (data) => {
-    console.log(data);
-    if (patternCheck.test(data.email)) {
-      return "invalid Email";
+  const { newUserData, mutate, newUserLoading } = signupMutation("allUsers");
+
+  const submitForm = (formData) => {
+    if (
+      formData.fullName === "" ||
+      formData.email === "" ||
+      formData.password === "" ||
+      formData.phone === ""
+    ) {
+      toast.warning("Form field cannot be empty", toastObject());
+      return;
     }
-    //   navigate("/login");
+
+    // if (patternCheck.test(formData.email)) {
+    //   toast.error("invalid Email", toastObject());
+    //   return;
+    // }
+
+    const findObject = data.some(
+      (objectData) => objectData.email === formData.email,
+      (objectData) => objectData.phone === formData.phone,
+      (objectData) => objectData.fullName === formData.fullName
+    );
+
+    if (findObject === true) {
+      toast.error("User details already exist", toastObject());
+      return;
+    }
+
+    const userObject = {
+      id: uuidv4(),
+      ...formData,
+    };
+    mutate({ url: postingUrl, data: userObject });
   };
 
   return (
@@ -44,7 +77,7 @@ function SignupPage() {
               type="text"
               placeholder="Full name"
               name="fullName"
-              {...register("fullName", { required: true })}
+              {...register("fullName")}
               autoComplete="off"
               className="border-2 border-dark-green outline-none rounded-md py-2 px-5 w-full mb-4"
             />
@@ -53,7 +86,7 @@ function SignupPage() {
               type="text"
               placeholder="Phone"
               name="phone"
-              {...register("phone", { required: true })}
+              {...register("phone")}
               autoComplete="off"
               className="border-2 border-dark-green outline-none rounded-md py-2 px-5 w-full mb-4"
             />
@@ -61,7 +94,7 @@ function SignupPage() {
               type="email"
               placeholder="Email"
               name="email"
-              {...register("email", { required: true })}
+              {...register("email", { pattern: patternCheck })}
               autoComplete="off"
               className="border-2 border-dark-green outline-none rounded-md py-2 px-5 w-full mb-4"
             />
@@ -70,7 +103,7 @@ function SignupPage() {
               type="password"
               placeholder="Password"
               name="password"
-              {...register("password", { required: true })}
+              {...register("password")}
               autoComplete="off"
               className="border-2 border-dark-green outline-none rounded-md py-2 px-5 w-full mb-4"
             />
