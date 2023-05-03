@@ -6,7 +6,7 @@ function Footer() {
   return (
     <div className="px-20 py-2">
       <h1>Footer</h1>
-      <p>&#x00A9; {date} Olakved Adekunle Oluwole. All rights reserved. </p>
+      <p>&#x00A9; {date}| Olakved Oluwole. All rights reserved. </p>
     </div>
   );
 }

@@ -16,7 +16,7 @@ function HeaderN() {
   const navigate = useNavigate();
 
   return (
-    <div className="shadow-md  w-full fixed top-0 left-0">
+    <div className="shadow-md  w-full fixed top-0 left-0 z-50">
       <div className="flex justify-between items-center bg-white py-4 md:px-10 px-7 md:flex-col">
         <div className="font-bold text-2xl cursor-pointer flex items-center text-dark-green">
           <span className="mr-3 ml-8">
