@@ -57,13 +57,13 @@ function HeaderN() {
         >
           <img src={menuIcon} alt="" className="w-5" />
         </div>
-        <label
+        {/* <label
           for="check"
           className="bg-gray-100 w-20 h-10 relative rounded-full"
         >
           <input type="checkbox" id="check" className="sr-only peer" />
           <span className="w-2/5 h-4/5 bg-light-green absolute rounded-full left-1 top-1 peer-checked:bg-dark-green peer-checked:left-11 transition-all duration-500"></span>
-        </label>
+        </label> */}
       </div>
     </div>
   );
